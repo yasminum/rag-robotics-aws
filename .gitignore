@@ -1,0 +1,76 @@
+@'
+# Credenciales y secrets
+*.pem
+*.ppk
+*.key
+.env
+.env.*
+.aws/
+credentials
+*.secret
+secrets.json
+
+# PDFs y material con copyright (solo raiz)
+/*.pdf
+/*.PDF
+/*.epub
+/*.djvu
+
+# Bucket S3 local
+/books/
+/papers/
+/raw-scan/
+/classroom/
+/data/
+
+# Archivos grandes
+*.zip
+*.tar.gz
+*.rar
+*.mp4
+*.mov
+*.mlx
+*.one
+*.mat
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+/logs/
+/tmp/
+ocr_work/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfvars
+
+# Node
+node_modules/
+'@ | Out-File -FilePath .gitignore -Encoding UTF8
+
+git add .gitignore
+git commit -m "Fix: restore .gitignore with proper rules"
+git push origin main
