@@ -1,0 +1,99 @@
+﻿# Infraestructura como codigo (IaC)
+
+## Archivos
+
+- ``knowledge_base.yaml`` - CloudFormation template que crea:
+  - Bucket S3 ``robotic-paper-rag``
+  - IAM role para Bedrock
+  - Knowledge Base con Titan Embeddings V2
+  - OpenSearch Serverless collection
+
+## Deploy
+
+`powershell
+aws cloudformation create-stack 
+    --stack-name rag-robotics 
+    --template-body file://infra/knowledge_base.yaml 
+    --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM 
+    --region us-east-2
+`
+
+## Destroy
+
+`powershell
+aws cloudformation delete-stack --stack-name rag-robotics --region us-east-2
+`
+"@ | Out-File -FilePath "infra/README.md" -Encoding UTF8
+    Write-OK "infra/README.md"
+}
+
+# infra/knowledge_base.yaml
+if (-not (Test-Path "infra/knowledge_base.yaml")) {
+    Write-Host "  Creando infra/knowledge_base.yaml" -ForegroundColor Gray
+    @"
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'RAG Robotics AWS - Knowledge Base'
+
+Parameters:
+  BucketName:
+    Type: String
+    Default: robotic-paper-rag
+  Region:
+    Type: String
+    Default: us-east-2
+    AllowedValues: [us-east-1, us-east-2, us-west-2, eu-west-1]
+
+Resources:
+  RagBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+
+  BedrockKbRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: bedrock.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+      Policies:
+        - PolicyName: BedrockKbS3Access
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:ListBucket
+                Resource:
+                  - !Sub 'arn:aws:s3:::${BucketName}'
+                  - !Sub 'arn:aws:s3:::${BucketName}/*'
+
+  OpenSearchCollection:
+    Type: AWS::OpenSearchServerless::Collection
+    Properties:
+      Name: rag-robotics-vectors
+      Type: VECTORSEARCH
+      Description: 'Vector store for RAG Knowledge Base'
+
+Outputs:
+  BucketArn:
+    Value: !GetAtt RagBucket.Arn
+  BucketName:
+    Value: !Ref BucketName
+  BedrockRoleArn:
+    Value: !GetAtt BedrockKbRole.Arn
+  OpenSearchCollectionArn:
+    Value: !GetAtt OpenSearchCollection.Arn

@@ -1,0 +1,13 @@
+﻿# S3 trigger para Lambda OCR
+# Configurar manualmente en: S3 > bucket > Properties > Event notifications
+Resource:
+  Type: AWS::S3::BucketNotification
+  Properties:
+    Bucket: !Ref RoboticPaperRagBucket
+    NotificationConfiguration:
+      LambdaFunctionConfigurations:
+        - Events: [s3:ObjectCreated:*]
+          Filter:
+            Prefix: raw-scan/
+            Suffix: .pdf
+          LambdaFunctionArn: !GetAtt OcrLambdaFunction.Arn
