@@ -1,0 +1,44 @@
+name: CI - Validate scripts
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pyyaml
+
+      - name: Lint Python
+        run: |
+          flake8 scripts/ --max-line-length=120 --extend-ignore=E203,W503
+
+      - name: Validate bash syntax
+        run: |
+          for f in scripts/*.sh; do
+            bash -n "$f" && echo "OK: $f"
+          done
+
+      - name: Validate CloudFormation template
+        run: |
+          python -c "import yaml; yaml.safe_load(open('infra/knowledge_base.yaml'))"
+          echo "YAML válido"
+
+      - name: Check for secrets in code
+        run: |
+          ! grep -rE "AKIA[0-9A-Z]{16}|aws_secret_access_key\s*=" \
+              scripts/ lambda/ infra/ README.md && \
+          echo "No se encontraron credenciales hardcodeadas"
