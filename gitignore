@@ -1,0 +1,143 @@
+# ============================================================
+# .gitignore — RAG Robotics AWS
+# ============================================================
+# EXPLÍCITO: solo ignora lo que realmente debe ignorarse.
+# NO usa patrones genéricos como "lib/" o "data/" que pueden borrar
+# carpetas legítimas del repo.
+# ============================================================
+
+# ─── Credenciales y secrets (NUNCA subir) ───────────────
+*.pem
+*.ppk
+*.key
+.env
+.env.*
+.aws/
+credentials
+*.secret
+secrets.json
+secrets.yaml
+aws_credentials
+
+# ─── PDFs y material con copyright ──────────────────────
+# NO subir libros/papers escaneados o digitales al repo.
+# IMPORTANTE: solo aplica a la raíz, NO a docs/ ni diagrams/.
+/*.pdf
+/*.PDF
+/*.epub
+/*.djvu
+
+# ─── Bucket S3 local (si clonas el bucket) ──────────────
+/books/
+/papers/
+/raw-scan/
+/classroom/
+/data/
+/s3-backup/
+
+# ─── Archivos grandes temporales ───────────────────────
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.mp4
+*.mov
+*.mlx
+*.one
+*.mat
+
+# ─── Python ───────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+parts/
+sdist/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ─── Virtual environments (Python) ─────────────────────
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ─── Jupyter Notebook ──────────────────────────────────
+.ipynb_checkpoints
+*.ipynb_checkpoints
+
+# ─── Testing / coverage ───────────────────────────────
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# ─── IDE ───────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.sublime-*
+.atom/
+
+# ─── OS ────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ─── Terraform ────────────────────────────────────────
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+crash.*.log
+
+# ─── CloudFormation packaged outputs ──────────────────
+*.packaged.yaml
+packaged/
+
+# ─── Logs y temporales ────────────────────────────────
+*.log
+/logs/
+/tmp/
+/temp/
+ocr_work/
+.LSManConfig
+
+# ─── Node.js (si se agrega frontend después) ──────────
+node_modules/
+package-lock.json
+
+# ─── AWS CLI cache ────────────────────────────────────
+.aws-cli/
+
+# ─── PowerShell ────────────────────────────────────────
+*.ps1.bak
